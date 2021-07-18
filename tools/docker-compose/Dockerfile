@@ -15,7 +15,7 @@ RUN dnf -y update && \
     dnf -y install https://github.com/krallin/tini/releases/download/v0.18.0/tini_0.18.0.rpm && \
     dnf -y install epel-release 'dnf-command(config-manager)' && \
     dnf module -y enable 'postgresql:10' && \
-    dnf config-manager --set-enabled PowerTools && \
+    dnf config-manager --set-enabled powertools && \
     dnf -y install acl \
     ansible \
     bubblewrap \
