@@ -42,15 +42,24 @@ export default
                 }
                 return $rootScope.userLoggedIn;
             },
-            retrieveToken: function (username, password) {
+            retrieveToken: function (username, password, otp) {
                 return $http({
-                    method: 'POST',
-                    url: `/api/login/`,
-                    data: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&next=%2fapi%2f`,
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                });
+                                method: 'POST',
+                                url: `/api/login/`,
+                                data: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&next=%2fapi%2f&otp=${otp}`,
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                }
+                            }).then(function(response) {
+                                console.log("inside suc");
+                                console.log(response);
+                                return response;
+                            }, function(error) {
+                                console.log("inside error");
+                                console.log(error);
+                                return error;
+                            });
+
             },
             deleteToken: function () {
                 return $http({
@@ -111,6 +120,7 @@ export default
                     $rootScope.token_expires = null;
                     $rootScope.login_username = null;
                     $rootScope.login_password = null;
+                    $rootScope.login_otp = null;
                     $rootScope.userLoggedOut = true;
                     $rootScope.pendingApprovalCount = 0;
                     if ($rootScope.sessionTimer) {

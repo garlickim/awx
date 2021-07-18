@@ -58,6 +58,7 @@ export default ['$log', '$cookies', '$rootScope', 'ProcessErrors',
     scope.sessionExpired = (Empty($rootScope.sessionExpired)) ? $cookies.get('sessionExpired') : $rootScope.sessionExpired;
     scope.login_username = '';
     scope.login_password = '';
+    scope.login_otp = '';
 
 
     lastPath = function () {
@@ -154,15 +155,15 @@ export default ['$log', '$cookies', '$rootScope', 'ProcessErrors',
     });
 
     // Call the API to get an auth token
-    scope.systemLogin = function (username, password) {
+    scope.systemLogin = function (username, password, otp) {
         $('.api-error').empty();
-        if (Empty(username) || Empty(password)) {
+        if (Empty(username) || Empty(password) || Empty(otp)) {
             scope.reset();
             scope.attemptFailed = true;
             $('#login-username').focus();
         } else {
             Wait('start');
-            Authorization.retrieveToken(username, password)
+            Authorization.retrieveToken(username, password, otp)
                 .then(function (data) {
                     $('#login-modal').modal('hide');
                     Authorization.setToken(data.data.expires);

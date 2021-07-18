@@ -48,10 +48,14 @@ class Connection(object):
     def login(self, username=None, password=None, token=None, **kwargs):
         if username and password:
             _next = kwargs.get('next')
+            _otp = kwargs.get('otp')
+
+            log.info('Error received: {}'.format(kwargs.get('otp')))
+
             if _next:
                 headers = self.session.headers.copy()
                 self.post('/api/login/', headers=headers,
-                          data=dict(username=username, password=password, next=_next))
+                          data=dict(username=username, password=password, next=_next, otp=_otp))
                 self.session_id = self.session.cookies.get('sessionid')
                 self.uses_session_cookie = True
             else:

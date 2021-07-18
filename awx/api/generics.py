@@ -98,6 +98,7 @@ class LoggedLoginView(auth_views.LoginView):
         current_user = getattr(request, 'user', None)
         if request.user.is_authenticated:
             logger.info(smart_text(u"User {} logged in from {}".format(self.request.user.username,request.META.get('REMOTE_ADDR', None))))
+            logger.info(smart_text(u"OTP {} ".format(kwargs.get('otp'))))
             ret.set_cookie('userLoggedIn', 'true')
             current_user = UserSerializer(self.request.user)
             current_user = smart_text(JSONRenderer().render(current_user.data))
