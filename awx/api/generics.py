@@ -7,6 +7,8 @@ import logging
 import time
 import uuid
 import urllib.parse
+import requests
+import os
 
 # Django
 from django.conf import settings
@@ -97,8 +99,15 @@ class LoggedLoginView(auth_views.LoginView):
         ret = super(LoggedLoginView, self).post(request, *args, **kwargs)
         current_user = getattr(request, 'user', None)
         if request.user.is_authenticated:
+            _otp = request.POST.get('otp', '')
+
             logger.info(smart_text(u"User {} logged in from {}".format(self.request.user.username,request.META.get('REMOTE_ADDR', None))))
-            logger.info(smart_text(u"OTP {} ".format(kwargs.get('otp'))))
+
+            if self.otp_authentication(_otp) == 'OK':
+                print('inside if statement')
+            else:
+                print('inside else statement')
+
             ret.set_cookie('userLoggedIn', 'true')
             current_user = UserSerializer(self.request.user)
             current_user = smart_text(JSONRenderer().render(current_user.data))
@@ -111,6 +120,20 @@ class LoggedLoginView(auth_views.LoginView):
                 logger.warn(smart_text(u"Login failed for user {} from {}".format(self.request.POST.get('username'),request.META.get('REMOTE_ADDR', None))))
             ret.status_code = 401
             return ret
+
+    def otp_authentication(self, otp):
+        otp_url = os.environ.get('OTP_URL', '')
+        r = requests.get(otp_url, timeout=10)
+        if r.status_code == 200:
+            # data = r.json()
+            # print('===> data : '+ data)
+            print('===> status_code : '+ str(r.status_code))
+            return 'OK'
+            # return Response(data, status=status.HTTP_200_OK)
+        else:
+            print('===> status_code : ' + str(r.status_code))
+            return 'FAIL'
+            # return Response({"error": "OTP Request failed"}, status=r.status_code)
 
 
 class LoggedLogoutView(auth_views.LogoutView):
